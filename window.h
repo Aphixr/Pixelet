@@ -59,7 +59,7 @@ namespace pxl
             }
 
             // Does loop actions
-            void doLoopRegActions()
+            void doRegLoopActions()
             {
                 glfwSwapBuffers(window);
                 glfwPollEvents();

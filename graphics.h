@@ -24,8 +24,8 @@ namespace pxl::graphics
     // Draw the background
     void background(float red, float green, float blue, float alpha=1.f)
     {
-		glClearColor(red/255, green/255, blue/255, alpha/255);
-		glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(red/255, green/255, blue/255, alpha/255);
+        glClear(GL_COLOR_BUFFER_BIT);
     }
 
     // Set the fill color
@@ -141,11 +141,11 @@ namespace pxl::graphics
         glBindVertexArray(0);
 
         // Tell OpenGL which Shader Program we want to use
-		glUseProgram(shaderProgram);
-		// Bind the VAO so OpenGL knows to use it
-		glBindVertexArray(VAO);
-		// Draw the triangle using the GL_TRIANGLES primitive
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+        glUseProgram(shaderProgram);
+        // Bind the VAO so OpenGL knows to use it
+        glBindVertexArray(VAO);
+        // Draw the triangle using the GL_TRIANGLES primitive
+        glDrawArrays(GL_TRIANGLES, 0, 3);
     }
 }
 
