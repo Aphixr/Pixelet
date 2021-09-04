@@ -2,7 +2,7 @@
 #pragma once
 
 // Macro for seeing if this file was included first
-#define INIT_H_INC
+#define PXL_INIT_H_INC_D
 
 // Includes
 #include <iostream>
