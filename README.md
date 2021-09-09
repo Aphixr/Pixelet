@@ -2,40 +2,50 @@
 
 ## Usage
 
-Example:
+Example belows shows a square bouncing around
 ```cpp
-// Include
+// Include Pixelet
 #include <pixelet/all.h>
 
-// Main function
+// Main
 int main()
 {
-    // Initialize
+    // Variables
+    int x = 0, y = 0, velX = 4, velY = 2;
+    
+    // Initialize Pixelet
     pxl::init();
 
     // Create the window
-    pxl::Window window(600, 600, "Example");
+    pxl::Window window(600, 600, "Pixelet Example");
 
-    // Main loop
+    // Do things while the window is open
     while (window.isOpen())
     {
+        // Pxl namespace
         using namespace pxl;
 
-        // Set background
+        // Put a dark gray background
         graphics::background(30, 30, 30);
 
-        // Draw a triangle
-        graphics::fill(30, 90, 248);
-        graphics::triangle(-1, -1, 1, -1, 0, 1);
+        // Draw the square
+        graphics::fill(48, 90, 224);
+        graphics::rect(x, y, 15, 15);
 
-        // Handle other loop actions
-        window.doLoopRegActions();
+        // Move the square
+        x += velX, y += velY;
+
+        // Change direction of square when it hits edge of window
+        if (x <= 0 || x >= window.width - 15) velX = -velX;
+        if (y <= 0 || y >= window.height - 15) velY = -velY;
+
+        // Do loop actions
+        window.doRegLoopActions();
     }
 
-    // End of program
+    // Exit program
     pxl::exit();
     return 0;
-}
 ```
 
 

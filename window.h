@@ -52,7 +52,11 @@ namespace pxl
                 gladLoadGL();
 
                 // Tell area of window to render in
-                glViewport(0, 0, 600, 600);
+                glViewport(0, 0, width, height);
+
+                // Window info
+                pxl::priv::windowWidth = width;
+                pxl::priv::windowHeight = height;
             }
 
             // Returns a boolean indicating if the window is open
