@@ -2,7 +2,7 @@
 
 ## Usage
 
-Example belows shows a square bouncing around
+Example belows shows a blue square bouncing around.
 ```cpp
 // Include Pixelet
 #include <pixelet/all.h>
@@ -11,13 +11,17 @@ Example belows shows a square bouncing around
 int main()
 {
     // Variables
-    int x = 0, y = 0, velX = 4, velY = 2;
+    double x = 0, y = 0, velX = 0.6, velY = 0.4;
     
     // Initialize Pixelet
     pxl::init();
 
     // Create the window
-    pxl::Window window(600, 600, "Pixelet Example");
+    pxl::window::Window window(600, 600, "Pixelet Test");
+
+    // Square
+    pxl::graphics::Rect square(x, y, 10, 10);
+    square.fill(60, 120, 255);
 
     // Do things while the window is open
     while (window.isOpen())
@@ -29,10 +33,10 @@ int main()
         graphics::background(30, 30, 30);
 
         // Draw the square
-        graphics::fill(48, 90, 224);
-        graphics::rect(x, y, 15, 15);
+        square.draw();
 
         // Move the square
+        square.position(x, y);
         x += velX, y += velY;
 
         // Change direction of square when it hits edge of window
@@ -46,6 +50,7 @@ int main()
     // Exit program
     pxl::exit();
     return 0;
+}
 ```
 
 

@@ -25,8 +25,29 @@
 namespace pxl::priv
 {
     // Read a file
+    // NOTICE: Does not work; need to fix
     std::string readFile(const char* fileName)
     {
+        std::string line, conts;
+        std::ifstream file(fileName);
+        std::cout << "1.";
+        // if (file.is_open())
+        {
+            std::cout << "2.";
+            while (std::getline(file, line))
+            {
+                std::cout << "3.";
+                conts += line;
+            }
+            file.close();
+            return conts;
+        }
+        // else
+        {
+            pxl::priv::Error("unable to open file", true);
+            return "";
+        }
+        /*
         std::ifstream in(fileName, std::ios::binary);
         if (in)
         {
@@ -39,6 +60,7 @@ namespace pxl::priv
             return contents;
         }
         throw errno;
+        */
     }
 
     // Convert our form of coords to OpenGL's
@@ -78,7 +100,7 @@ namespace pxl::priv
                         glGetShaderInfoLog(shader, 1024, NULL, infoLog);
 
                         // Print error
-                        // pxl::priv::Error("shader compilation " + std::string(type), true);
+                        pxl::priv::Error("shader compilation " + std::string(type), true);
                     }
                 }
                 else
@@ -90,7 +112,7 @@ namespace pxl::priv
                         glGetProgramInfoLog(shader, 1024, NULL, infoLog);
 
                         // Print error
-                        // pxl::priv::Error("shader linking " + std::string(type), true);
+                        pxl::priv::Error("shader linking " + std::string(type), true);
                     }
                 }
             }
@@ -99,9 +121,14 @@ namespace pxl::priv
         public:
             GLuint id;
 
+            // Default constructor
+            Shader() = default;
+
             // Constructor
             Shader(const char* vertexSource, const char* fragmentSource)
             {
+                this->giveShaderSources(vertexSource, fragmentSource);
+                /*
                 // Create vertex shader
                 GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
                 glShaderSource(vertexShader, 1, &vertexSource, NULL);
@@ -113,6 +140,38 @@ namespace pxl::priv
                 glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
                 glCompileShader(fragmentShader);
                 this->compileErrors(fragmentShader, "FRAGMENT");
+
+                // Create shader program
+                this->id = glCreateProgram();
+
+                // Attach shaders to shader program
+                glAttachShader(this->id, vertexShader);
+                glAttachShader(this->id, fragmentShader);
+
+                // Wrap up the shader program
+                glLinkProgram(this->id);
+                this->compileErrors(this->id, "PROGRAM");
+
+                // Delete shaders
+                glDeleteShader(vertexShader);
+                glDeleteShader(fragmentShader);
+                */
+            }
+
+            // Give shader sources
+            void giveShaderSources(const char* vertexSource, const char* fragmentSource)
+            {
+                // Create vertex shader
+                GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+                glShaderSource(vertexShader, 1, &vertexSource, NULL);
+                glCompileShader(vertexShader);
+                this->compileErrors(vertexShader, "vertex");
+
+                // Create fragment shader
+                GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+                glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
+                glCompileShader(fragmentShader);
+                this->compileErrors(fragmentShader, "fragment");
 
                 // Create shader program
                 this->id = glCreateProgram();
@@ -149,6 +208,15 @@ namespace pxl::priv
         // Public
         public:
             GLuint id;
+
+            // Constructor without setting
+            VBO() = default;
+
+            // Constructor with setting vertices and size
+            VBO(GLfloat* vertices, GLsizeiptr size)
+            {
+                this->set(vertices, size);
+            }
 
             // Set
             void set(GLfloat* vertices, GLsizeiptr size)
@@ -234,7 +302,16 @@ namespace pxl::priv
         public:
             GLuint id;
 
-            // Constructor
+            // Default constructor
+            EBO() = default;
+
+            // Constructor with init'n indices and size
+            EBO(GLuint* indices, GLsizeiptr size)
+            {
+                this->set(indices, size);
+            }
+
+            // Set
             void set(GLuint* indices, GLsizeiptr size)
             {
                 // Generate buffer
@@ -274,6 +351,9 @@ namespace pxl::graphics
     float curFillColor[4] = {255, 255, 255, 255};
     float curStrokeColor[4] = {0, 0, 0, 0};
 
+    // Frame rate
+    unsigned int frameRate = 60;
+
     // Draw the background
     void background(float red, float green, float blue, float alpha=1.f)
     {
@@ -305,23 +385,30 @@ namespace pxl::graphics
         // Private
         private:
             // Vertex shader code
+            // /*
             const char* vertexShaderSource =
-                "#version 330 core                                        \n"
-                "layout (location = 0) in vec3 aPos;                      \n"
-                "void main()                                              \n"
-                "{                                                        \n"
-                "    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.f);     \n"
-                "}                                                        \0";
+                "#version 330 core                                      \n"
+                "layout (location = 0) in vec3 aPos;                    \n"
+                "void main()                                            \n"
+                "{                                                      \n"
+                "    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.f);   \n"
+                "}                                                      \0";
+            // const char* vertexShaderSource =
+                // pxl::priv::readFile("vert-shdrs/default.glsl").c_str();
             
             // Fragment shader code
-            const std::string fragmentShaderSourceAsStdStr =
+            // /*
+            const char* fragmentShaderSource =
                 "#version 330 core                           \n"
                 "out vec4 FragColor;                         \n"
+                "uniform vec4 color;                         \n"
                 "void main()                                 \n"
                 "{                                           \n"
-                "    FragColor = vec4(1.f, 1.f, 1.f, 1.f);   \n"
+                "    FragColor = color;                      \n"
                 "}                                           \0";
-            const char* fragmentShaderSource = fragmentShaderSourceAsStdStr.c_str();
+            // const char* fragmentShaderSource = fragmentShaderSourceAsStdStr.c_str();
+            // const char* fragmentShaderSource =
+                // pxl::priv::readFile("frag-shdrs/default.glsl").c_str();
 
             // Coordinates of the rectangle
             GLfloat vertices[12];
@@ -330,7 +417,7 @@ namespace pxl::graphics
             GLuint indices[6] = {0, 1, 2, 3, 2, 1};
 
             // Define other things
-            pxl::priv::Shader shader{vertexShaderSource, fragmentShaderSource};
+            pxl::priv::Shader shader;
             pxl::priv::VAO vao;
             pxl::priv::VBO vbo;
             pxl::priv::EBO ebo;
@@ -368,25 +455,25 @@ namespace pxl::graphics
                 }
 
                 // Set position and size
-                this->setPosYet = true;
-                this->setSizeYet = true;
+                setPosYet = true;
+                setSizeYet = true;
             }
 
             // Update shape
             void update()
             {
                 // Bind VAO
-                this->vao.bind();
+                vao.bind();
                 
                 // VBO and EBO
-                this->vbo.set(vertices, sizeof(vertices));
-                this->ebo.set(indices, sizeof(indices));
+                vbo.set(vertices, sizeof(vertices));
+                ebo.set(indices, sizeof(indices));
 
                 // Link VBO to VAO
-                this->vao.linkAttrib(this->vbo, 0, 3, GL_FLOAT, 0, (void*)0);
+                vao.linkAttrib(vbo, 0, 3, GL_FLOAT, 0, (void*)0);
 
                 // Unbind VAO, VBO, and EBO
-                this->vao.unbind(), this->vbo.unbind(), this->ebo.unbind();
+                vao.unbind(), vbo.unbind(), ebo.unbind();
             }
 
             // Position and size
@@ -396,45 +483,63 @@ namespace pxl::graphics
             // Color
             float fillColor[4] = {1.f, 1.f, 1.f, 1.f};
             float strokeColor[4] = {0.f, 0.f, 0.f, 0.f};
+            GLfloat glFillColor[4] = {1.f, 1.f, 1.f, 1.f};
+            GLfloat glStrokeColor[4] = {0.f, 0.f, 0.f, 0.f};
 
         // Public
         public:
             // Constructor with no arguments
             Rect()
             {
+                // Give shader sources
+                shader.giveShaderSources(vertexShaderSource, fragmentShaderSource);
+
+                // Put zero for some items in vertices array because this is 2D
                 for (int i = 2; i < 12; i += 3)
                 {
-                    this->vertices[i] = 0.f;
+                    vertices[i] = 0.f;
                 }
             }
 
             // Constructor with initialized position and size
             Rect(float x, float y, float width, float height)
             {
+                // Give shader sources
+                shader.giveShaderSources(vertexShaderSource, fragmentShaderSource);
+
                 // Set the elements of the vertices
-                this->setVerticesItems(x, y, width, height);
+                setVerticesItems(x, y, width, height);
 
                 // Update
-                this->update();
+                update();
             }
 
             // Set the position
-            void position(float x, float y)
+            void position(float xPos, float yPos)
             {
                 // Set attributes
-                this->x = x, this->y = y;
+                x = xPos, y = yPos;
 
                 // Set the items of vertices array
                 vertices[0] = *pxl::priv::convertCoords('x', x);
                 vertices[6] = *pxl::priv::convertCoords('x', x);
                 vertices[1] = *pxl::priv::convertCoords('y', y);
                 vertices[4] = *pxl::priv::convertCoords('y', y);
+                
+                // If set size yet, change those values too
+                if (this->setSizeYet)
+                {
+                    vertices[3] = *pxl::priv::convertCoords('x', x + width);
+                    vertices[9] = *pxl::priv::convertCoords('x', x + width);
+                    vertices[7] = *pxl::priv::convertCoords('y', y + height);
+                    vertices[10] = *pxl::priv::convertCoords('y', y + height);
+                }
 
                 // Update
-                this->update();
+                update();
 
                 // Set position
-                this->setPosYet = true;
+                setPosYet = true;
             }
 
             // Set the size
@@ -450,27 +555,31 @@ namespace pxl::graphics
                 vertices[10] = *pxl::priv::convertCoords('y', y + height);
 
                 // Update
-                this->update();
+                update();
 
                 // Set size
-                this->setSizeYet = true;
+                setSizeYet = true;
             }
 
             // Draw the rectangle
             void draw()
             {
                 // Check if set position and size yet
-                if (!this->setPosYet && !this->setSizeYet)
+                if (!setPosYet && !setSizeYet)
                 {
                     pxl::priv::Error("cannot draw rectangle without setting position and size first");
                     return;
                 }
 
                 // Shader
-                this->shader.activate();
+                shader.activate();
 
                 // Bind the VAO
-                this->vao.bind();
+                vao.bind();
+
+                // Color
+                GLint colorLoc = glGetUniformLocation(shader.id, "color");
+                glUniform4fv(colorLoc, 1, glFillColor);
 
                 // Draw the rectangle
                 glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -480,10 +589,14 @@ namespace pxl::graphics
             void fill(int red, int green, int blue, int alpha=255)
             {
                 // Set fill color variable
-                this->fillColor[0] = red / 255;
-                this->fillColor[1] = green / 255;
-                this->fillColor[2] = blue / 255;
-                this->fillColor[3] = alpha / 255;
+                fillColor[0] = red / 255;
+                fillColor[1] = green / 255;
+                fillColor[2] = blue / 255;
+                fillColor[3] = alpha / 255;
+
+                // Do the same for gl colors
+                for (int i = 0; i < 4; ++i)
+                    glFillColor[i] = fillColor[i];
             }
     };
 
@@ -492,12 +605,7 @@ namespace pxl::graphics
     {
         // Vertex shader code
         const char* vertexShaderSource =
-            "#version 330 core                                        \n"
-            "layout (location = 0) in vec3 aPos;                      \n"
-            "void main()                                              \n"
-            "{                                                        \n"
-            "    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.f);     \n"
-            "}                                                        \0";
+            pxl::priv::readFile("vert-shdrs/default.glsl").c_str();
         
         // Fragment shader code
         const std::string fragmentShaderSourceAsStdStr =
@@ -544,10 +652,10 @@ namespace pxl::graphics
         vao.bind();
         
         // VBO and EBO
-        pxl::priv::VBO vbo;
-        vbo.set(vertices, sizeof(vertices));
-        pxl::priv::EBO ebo;
-        ebo.set(indices, sizeof(indices));
+        pxl::priv::VBO vbo(vertices, sizeof(vertices));
+        // vbo.set(vertices, sizeof(vertices));
+        pxl::priv::EBO ebo(indices, sizeof(indices));
+        // ebo.set(indices, sizeof(indices));
 
         // Link VBO to VAO
         vao.linkAttrib(vbo, 0, 3, GL_FLOAT, 0, (void*)0);
@@ -570,12 +678,7 @@ namespace pxl::graphics
     {
         // Vertex shader code
         const char* vertexShaderSource =
-            "#version 330 core                                        \n"
-            "layout (location = 0) in vec3 aPos;                      \n"
-            "void main()                                              \n"
-            "{                                                        \n"
-            "    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.f);     \n"
-            "}                                                        \0";
+            pxl::priv::readFile("vert-shdrs/default.glsl").c_str();
         
         // Fragment shader code
         const std::string fragmentShaderSourceAsStdStr =
