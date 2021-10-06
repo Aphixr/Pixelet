@@ -2,7 +2,7 @@
 #pragma once
 
 // Macro for seeing if this file was included first
-#define PXL_INIT_H_INC_D
+#define PXL_INIT_HPP_INC_D_SCF_Y
 
 // Includes
 #include <iostream>
@@ -45,19 +45,14 @@ namespace pxl::priv
                     std::cout << "pxl author error: " << msg << "\n";
             }
     };
-
-    // Global log
-    int globalLog(std::string msg="test")
-    {
-        std::cout << msg << "\n";
-        return 0;
-    }
 }
 
 // Namespace
 namespace pxl
 {
-    // Initialize everything
+    /**
+     * Initialize
+     */
     void init()
     {
         // Initialize GLFW
@@ -69,23 +64,13 @@ namespace pxl
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     }
 
-    // Exit program; call this function when program is going to end
+    /**
+     * Exit program; call this function when program is going to end
+     */
     void exit()
     {
         glfwTerminate();
     }
-
-    // Hold info that can be used in different functions
-    class InfoHolder
-    {
-        // Public
-        public:
-            // Constructor
-            InfoHolder()
-            {
-                
-            }
-    };
 }
 
 

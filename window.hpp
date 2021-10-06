@@ -10,12 +10,12 @@
 #include <GLFW/glfw3.h>
 
 // Check if init.h file was included already
-#ifndef PXL_INIT_H_INC_D
-#error Include 'init.h' file before including this file
+#ifndef PXL_INIT_HPP_INC_D_SCF_Y
+#error Include 'init.hpp' file before including this file
 #else
 
 // Successfully included this file
-#define PXL_WINDOW_H_INC_D_SCF
+#define PXL_WINDOW_HPP_INC_D_SCF_Y
 
 // Window namespace
 namespace pxl::window
@@ -34,7 +34,12 @@ namespace pxl::window
             unsigned int width, height;
             std::string title;
 
-            // Constructor
+            /**
+             * Constructor for pxl::window::Window class
+             * @param width the width of the window
+             * @param height the height of the window
+             * @param title the title of the window
+             */
             Window(unsigned int width, unsigned int height, std::string title)
             {
                 // Set the attributes
@@ -43,7 +48,7 @@ namespace pxl::window
                 this->title = title;
 
                 // Create the window
-                this->window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+                window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 
                 // Use the window
                 glfwMakeContextCurrent(window);
@@ -59,13 +64,18 @@ namespace pxl::window
                 pxl::priv::windowHeight = height;
             }
 
-            // Returns a boolean indicating if the window is open
+            /**
+             * If the window is open or not
+             * @returns a boolean indicating if the window is open
+             */
             bool isOpen()
             {
                 return !glfwWindowShouldClose(window);
             }
 
-            // Does loop actions
+            /**
+             * Does other things that should be handled in the loop
+             */
             void doRegLoopActions()
             {
                 glfwSwapBuffers(window);
@@ -83,17 +93,10 @@ namespace pxl::window
         
         // Public
         public:
-            // Limited FPS
-            unsigned int fps;
-
-            // Constructor
-            FrameRate(unsigned int fpsLimit=60)
-            {
-                fps = fpsLimit;
-            }
-
-            // Print FPS, put this inside while loop
-            int print()
+            /**
+             * Prints the frame rate into the terminal
+             */
+            void print()
             {
                 // Measure
                 double currentTime = glfwGetTime();
@@ -102,35 +105,13 @@ namespace pxl::window
                 // Give value every second
                 if (currentTime - lastTime >= 1.0)
                 {
+                    // Print framerate
                     std::cout << "fps: " << numOfFrames << "\n";
                     
                     // Reset
-                    // const unsigned int tempNOF = numOfFrames;
                     numOfFrames = 0;
                     lastTime += 1.0;
-
-                    // Return FPS
-                    // return tempNOF;
-                    return 0;
                 }
-
-                // Return -1 if cannot give value yet
-                return -1;
-            }
-
-            // Returns boolean deciding whether to display next frame or not
-            bool allowNextFrame()
-            {
-                // Measure
-                double currentTime = glfwGetTime();
-
-                // Checks if reached set FPS limit
-                if (currentTime - lastTime >= 1.0 / (double)fps)
-                {
-                    lastTime += 1.0 / (double)fps;
-                    return true;
-                }
-                else return false;
             }
     };
 }

@@ -5,7 +5,7 @@
 Example belows shows a blue square bouncing around.
 ```cpp
 // Include Pixelet
-#include <pixelet/all.h>
+#include <pixelet/all.hpp>
 
 // Main
 int main()
@@ -21,7 +21,7 @@ int main()
 
     // Square
     pxl::graphics::Rect square(x, y, 10, 10);
-    square.fill(60, 120, 255);
+    square.fill(120, 180, 255);
 
     // Do things while the window is open
     while (window.isOpen())

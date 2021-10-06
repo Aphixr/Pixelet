@@ -6,20 +6,18 @@
 #include <string>
 #include <optional>
 #include <fstream>
-#include <sstream>
-#include <cerrno>
 
 // Include OpenGL stuff
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 // Check if init.h file was included already
-#ifndef PXL_INIT_H_INC_D
-#error Include 'init.h' file before including this file
+#ifndef PXL_INIT_HPP_INC_D_SCF_Y
+#error Include 'init.hpp' file before including this file
 #else
 
 // Successfully included this file
-#define PXL_GRAPHICS_H_INC_D_SCF
+#define PXL_GRAPHICS_HPP_INC_D_SCF_Y
 
 // Private classes, functions, etc., that should normally not be accessed
 namespace pxl::priv
@@ -47,20 +45,6 @@ namespace pxl::priv
             pxl::priv::Error("unable to open file", true);
             return "";
         }
-        /*
-        std::ifstream in(fileName, std::ios::binary);
-        if (in)
-        {
-            std::string contents;
-            in.seekg(0, std::ios::end);
-            contents.resize(in.tellg());
-            in.seekg(0, std::ios::beg);
-            in.read(&contents[0], contents.size());
-            in.close();
-            return contents;
-        }
-        throw errno;
-        */
     }
 
     // Convert our form of coords to OpenGL's
@@ -127,35 +111,7 @@ namespace pxl::priv
             // Constructor
             Shader(const char* vertexSource, const char* fragmentSource)
             {
-                this->giveShaderSources(vertexSource, fragmentSource);
-                /*
-                // Create vertex shader
-                GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-                glShaderSource(vertexShader, 1, &vertexSource, NULL);
-                glCompileShader(vertexShader);
-                this->compileErrors(vertexShader, "VERTEX");
-
-                // Create fragment shader
-                GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-                glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
-                glCompileShader(fragmentShader);
-                this->compileErrors(fragmentShader, "FRAGMENT");
-
-                // Create shader program
-                this->id = glCreateProgram();
-
-                // Attach shaders to shader program
-                glAttachShader(this->id, vertexShader);
-                glAttachShader(this->id, fragmentShader);
-
-                // Wrap up the shader program
-                glLinkProgram(this->id);
-                this->compileErrors(this->id, "PROGRAM");
-
-                // Delete shaders
-                glDeleteShader(vertexShader);
-                glDeleteShader(fragmentShader);
-                */
+                giveShaderSources(vertexSource, fragmentSource);
             }
 
             // Give shader sources
@@ -165,24 +121,24 @@ namespace pxl::priv
                 GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
                 glShaderSource(vertexShader, 1, &vertexSource, NULL);
                 glCompileShader(vertexShader);
-                this->compileErrors(vertexShader, "vertex");
+                compileErrors(vertexShader, "vertex");
 
                 // Create fragment shader
                 GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
                 glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
                 glCompileShader(fragmentShader);
-                this->compileErrors(fragmentShader, "fragment");
+                compileErrors(fragmentShader, "fragment");
 
                 // Create shader program
-                this->id = glCreateProgram();
+                id = glCreateProgram();
 
                 // Attach shaders to shader program
-                glAttachShader(this->id, vertexShader);
-                glAttachShader(this->id, fragmentShader);
+                glAttachShader(id, vertexShader);
+                glAttachShader(id, fragmentShader);
 
                 // Wrap up the shader program
-                glLinkProgram(this->id);
-                this->compileErrors(this->id, "PROGRAM");
+                glLinkProgram(id);
+                compileErrors(id, "PROGRAM");
 
                 // Delete shaders
                 glDeleteShader(vertexShader);
@@ -215,18 +171,17 @@ namespace pxl::priv
             // Constructor with setting vertices and size
             VBO(GLfloat* vertices, GLsizeiptr size)
             {
-                this->set(vertices, size);
+                set(vertices, size);
             }
 
             // Set
             void set(GLfloat* vertices, GLsizeiptr size)
             {
                 // Generate buffers
-                glGenBuffers(1, &this->id);
+                glGenBuffers(1, &id);
 
                 // Specify array buffer
-                // glBindBuffer(GL_ARRAY_BUFFER, this->id);
-                this->bind();
+                bind();
 
                 // Give vertices to VBO
                 glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
@@ -235,7 +190,7 @@ namespace pxl::priv
             // Bind
             void bind()
             {
-                glBindBuffer(GL_ARRAY_BUFFER, this->id);
+                glBindBuffer(GL_ARRAY_BUFFER, id);
             }
 
             // Unbind
@@ -261,7 +216,7 @@ namespace pxl::priv
             // Constructor
             VAO()
             {
-                glGenVertexArrays(1, &this->id);
+                glGenVertexArrays(1, &id);
             }
 
             // Link
@@ -279,7 +234,7 @@ namespace pxl::priv
             // Bind
             void bind()
             {
-                glBindVertexArray(this->id);
+                glBindVertexArray(id);
             }
 
             // Unbind
@@ -291,7 +246,7 @@ namespace pxl::priv
             // Delete things
             void del()
             {
-                glDeleteVertexArrays(1, &this->id);
+                glDeleteVertexArrays(1, &id);
             }
     };
 
@@ -308,17 +263,17 @@ namespace pxl::priv
             // Constructor with init'n indices and size
             EBO(GLuint* indices, GLsizeiptr size)
             {
-                this->set(indices, size);
+                set(indices, size);
             }
 
             // Set
             void set(GLuint* indices, GLsizeiptr size)
             {
                 // Generate buffer
-                glGenBuffers(1, &this->id);
+                glGenBuffers(1, &id);
 
                 // Specify array buffer
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->id);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
 
                 // Give vertices to VBO
                 glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
@@ -327,7 +282,7 @@ namespace pxl::priv
             // Bind
             void bind()
             {
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->id);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
             }
 
             // Unbind
@@ -339,7 +294,7 @@ namespace pxl::priv
             // Delete
             void del()
             {
-                glDeleteBuffers(1, &this->id);
+                glDeleteBuffers(1, &id);
             }
     };
 }
@@ -351,17 +306,26 @@ namespace pxl::graphics
     float curFillColor[4] = {255, 255, 255, 255};
     float curStrokeColor[4] = {0, 0, 0, 0};
 
-    // Frame rate
-    unsigned int frameRate = 60;
-
-    // Draw the background
+    /**
+     * Set the background color
+     * @param red the red color value
+     * @param green the green color value
+     * @param blue the blue color value
+     * @param alpha the opacity (optional)
+     */
     void background(float red, float green, float blue, float alpha=1.f)
     {
         glClearColor(red/255, green/255, blue/255, alpha/255);
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    // Set the fill color
+    /**
+     * Set the fill color of a shape
+     * @param red the red color value
+     * @param green the green color value
+     * @param blue the blue color value
+     * @param alpha the opacity (optional)
+     */
     void fill(float red, float green, float blue, float alpha=255.f)
     {
         curFillColor[0] = red;
@@ -370,22 +334,12 @@ namespace pxl::graphics
         curFillColor[3] = alpha;
     }
 
-    // Set the outline color
-    void stroke(float red, float green, float blue, float alpha=255.f)
+    // Quadrilateral
+    class Quad
     {
-        curStrokeColor[0] = red;
-        curStrokeColor[1] = green;
-        curStrokeColor[2] = blue;
-        curStrokeColor[3] = alpha;
-    }
-
-    // Rectangle
-    class Rect
-    {
-        // Private
-        private:
+        // Protected
+        protected:
             // Vertex shader code
-            // /*
             const char* vertexShaderSource =
                 "#version 330 core                                      \n"
                 "layout (location = 0) in vec3 aPos;                    \n"
@@ -393,22 +347,188 @@ namespace pxl::graphics
                 "{                                                      \n"
                 "    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.f);   \n"
                 "}                                                      \0";
-            // const char* vertexShaderSource =
-                // pxl::priv::readFile("vert-shdrs/default.glsl").c_str();
             
             // Fragment shader code
-            // /*
             const char* fragmentShaderSource =
-                "#version 330 core                           \n"
-                "out vec4 FragColor;                         \n"
-                "uniform vec4 color;                         \n"
-                "void main()                                 \n"
-                "{                                           \n"
-                "    FragColor = color;                      \n"
-                "}                                           \0";
-            // const char* fragmentShaderSource = fragmentShaderSourceAsStdStr.c_str();
-            // const char* fragmentShaderSource =
-                // pxl::priv::readFile("frag-shdrs/default.glsl").c_str();
+                "#version 330 core         \n"
+                "out vec4 FragColor;       \n"
+                "uniform vec4 color;       \n"
+                "void main()               \n"
+                "{                         \n"
+                "    FragColor = color;    \n"
+                "}                         \0";
+
+            // Coordinates of the quadrilateral
+            GLfloat vertices[12];
+
+            // Indices
+            GLuint indices[6] = {0, 1, 2, 3, 2, 1};
+
+            // Define other things
+            pxl::priv::Shader shader;
+            pxl::priv::VAO vao;
+            pxl::priv::VBO vbo;
+            pxl::priv::EBO ebo;
+
+            // Update shape
+            void update()
+            {
+                // Bind VAO
+                vao.bind();
+                
+                // VBO and EBO
+                vbo.set(vertices, sizeof(vertices));
+                ebo.set(indices, sizeof(indices));
+
+                // Link VBO to VAO
+                vao.linkAttrib(vbo, 0, 3, GL_FLOAT, 0, (void*)0);
+
+                // Unbind VAO, VBO, and EBO
+                vao.unbind(), vbo.unbind(), ebo.unbind();
+            }
+
+            // Position and size
+            float x1, y1, x2, y2, x3, y3, x4, y4;
+            bool setPosYet = false;
+
+            // Color
+            float fillColor[4] = {1.f, 1.f, 1.f, 1.f};
+            float strokeColor[4] = {0.f, 0.f, 0.f, 0.f};
+            GLfloat glFillColor[4] = {1.f, 1.f, 1.f, 1.f};
+            GLfloat glStrokeColor[4] = {0.f, 0.f, 0.f, 0.f};
+
+        // Public
+        public:
+            /**
+             * Constructor with initializing position of verices
+             */
+            Quad()
+            {
+                // Give shader sources
+                shader.giveShaderSources(vertexShaderSource, fragmentShaderSource);
+
+                // Put zero for some items in vertices array because this is 2D
+                for (int i = 2; i < 12; i += 3) vertices[i] = 0.f;
+            }
+
+            /**
+             * Constructor with initialized position of vertices
+             */
+            Quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+            {
+                // Give shader sources
+                shader.giveShaderSources(vertexShaderSource, fragmentShaderSource);
+
+                // Set the elements of the vertices
+                position(x1, y1, x2, y2, x3, y3, x4, y4);
+            }
+
+            /**
+             * Set the position of the quadrilateral
+             * @param x1 the x-coordinate of the first vertex
+             * @param y1 the y-coordinate of the first vertex
+             * @param x2 the x-coordinate of the second vertex
+             * @param y2 the y-coordinate of the second vertex
+             * @param x3 the x-coordinate of the third vertex
+             * @param y3 the y-coordinate of the third vertex
+             * @param x4 the x-coordinate of the fourth vertex
+             * @param y4 the y-coordinate of the fourth vertex
+             */
+            void position(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+            {
+                // Set attributes
+                this->x1 = x1, this->y1 = y1;
+                this->x2 = x2, this->y2 = y2;
+                this->x3 = x3, this->y3 = y3;
+                this->x4 = x4, this->y4 = y4;
+
+                // Set the items of vertices array
+                vertices[0] = *pxl::priv::convertCoords('x', x1);
+                vertices[1] = *pxl::priv::convertCoords('y', y1);
+                vertices[3] = *pxl::priv::convertCoords('x', x2);
+                vertices[4] = *pxl::priv::convertCoords('y', y2);
+                vertices[6] = *pxl::priv::convertCoords('x', x3);
+                vertices[7] = *pxl::priv::convertCoords('y', y3);
+                vertices[9] = *pxl::priv::convertCoords('x', x4);
+                vertices[10] = *pxl::priv::convertCoords('y', y4);
+
+                // Update
+                update();
+
+                // Set position
+                setPosYet = true;
+            }
+
+            /**
+             * Draw the quadrilateral onto the window
+             */
+            void draw()
+            {
+                // Check if set position and size yet
+                if (!setPosYet)
+                {
+                    pxl::priv::Error("cannot draw quadrilateral without setting positions first");
+                    return;
+                }
+
+                // Shader
+                shader.activate();
+
+                // Bind the VAO
+                vao.bind();
+
+                // Color
+                GLint colorLoc = glGetUniformLocation(shader.id, "color");
+                glUniform4fv(colorLoc, 1, glFillColor);
+
+                // Draw the rectangle
+                glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            }
+
+            /**
+             * Set the fill color of the shape
+             * @param red the red color value
+             * @param green the green color value
+             * @param blue the blue color value
+             * @param alpha the opacity (optional)
+             */
+            void fill(float red, float green, float blue, float alpha=255.f)
+            {
+                // Set fill color variable
+                fillColor[0] = red / 255.f;
+                fillColor[1] = green / 255.f;
+                fillColor[2] = blue / 255.f;
+                fillColor[3] = alpha / 255.f;
+
+                // Do the same for gl colors
+                for (int i = 0; i < 4; ++i)
+                    glFillColor[i] = fillColor[i];
+            }
+    };
+
+    // Rectangle
+    class Rect
+    {
+        // Private
+        private:
+            // Vertex shader code
+            const char* vertexShaderSource =
+                "#version 330 core                                      \n"
+                "layout (location = 0) in vec3 aPos;                    \n"
+                "void main()                                            \n"
+                "{                                                      \n"
+                "    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.f);   \n"
+                "}                                                      \0";
+            
+            // Fragment shader code
+            const char* fragmentShaderSource =
+                "#version 330 core          \n"
+                "out vec4 FragColor;        \n"
+                "uniform vec4 color;        \n"
+                "void main()                \n"
+                "{                          \n"
+                "    FragColor = color;     \n"
+                "}                          \0";
 
             // Coordinates of the rectangle
             GLfloat vertices[12];
@@ -488,20 +608,21 @@ namespace pxl::graphics
 
         // Public
         public:
-            // Constructor with no arguments
+            /**
+             *  Constructor with no arguments
+             */
             Rect()
             {
                 // Give shader sources
                 shader.giveShaderSources(vertexShaderSource, fragmentShaderSource);
 
                 // Put zero for some items in vertices array because this is 2D
-                for (int i = 2; i < 12; i += 3)
-                {
-                    vertices[i] = 0.f;
-                }
+                for (int i = 2; i < 12; i += 3) vertices[i] = 0.f;
             }
 
-            // Constructor with initialized position and size
+            /**
+             * Constructor with initialized position and size
+             */
             Rect(float x, float y, float width, float height)
             {
                 // Give shader sources
@@ -514,7 +635,11 @@ namespace pxl::graphics
                 update();
             }
 
-            // Set the position
+            /**
+             * Set the position of the rectangle
+             * @param xPos the x position
+             * @param yPos the y position
+             */
             void position(float xPos, float yPos)
             {
                 // Set attributes
@@ -527,7 +652,7 @@ namespace pxl::graphics
                 vertices[4] = *pxl::priv::convertCoords('y', y);
                 
                 // If set size yet, change those values too
-                if (this->setSizeYet)
+                if (setSizeYet)
                 {
                     vertices[3] = *pxl::priv::convertCoords('x', x + width);
                     vertices[9] = *pxl::priv::convertCoords('x', x + width);
@@ -542,7 +667,11 @@ namespace pxl::graphics
                 setPosYet = true;
             }
 
-            // Set the size
+            /**
+             * Set the size of the rectangle
+             * @param width the width of the rectangle
+             * @param height the height of the rectangle
+             */
             void size(float width, float height)
             {
                 // Set attributes
@@ -561,7 +690,9 @@ namespace pxl::graphics
                 setSizeYet = true;
             }
 
-            // Draw the rectangle
+            /**
+             * Draw the rectangle
+             */
             void draw()
             {
                 // Check if set position and size yet
@@ -585,7 +716,13 @@ namespace pxl::graphics
                 glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             }
 
-            // Set the fill color
+            /**
+             * Set the fill color of the shape
+             * @param red the red color value
+             * @param green the green color value
+             * @param blue the blue color value
+             * @param alpha the opacity (optional)
+             */
             void fill(int red, int green, int blue, int alpha=255)
             {
                 // Set fill color variable
@@ -600,7 +737,14 @@ namespace pxl::graphics
             }
     };
 
-    // Draw a rectangle
+    /**
+     * Draws a rectangle. 
+     * Using this greatly decreases performance
+     * @param x the x position
+     * @param y the y position
+     * @param width the width
+     * @param height the height
+     */
     void rect(float x, float y, float width, float height)
     {
         // Vertex shader code
@@ -653,9 +797,7 @@ namespace pxl::graphics
         
         // VBO and EBO
         pxl::priv::VBO vbo(vertices, sizeof(vertices));
-        // vbo.set(vertices, sizeof(vertices));
         pxl::priv::EBO ebo(indices, sizeof(indices));
-        // ebo.set(indices, sizeof(indices));
 
         // Link VBO to VAO
         vao.linkAttrib(vbo, 0, 3, GL_FLOAT, 0, (void*)0);
@@ -673,7 +815,16 @@ namespace pxl::graphics
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 
-    // Draw a triangle
+    /**
+     * Draws a triangle. 
+     * Using this greatly decreases performance
+     * @param x1 the x position of the first vertex
+     * @param y1 the y position of the first vertex
+     * @param x2 the x position of the second vertex
+     * @param y2 the y position of the second vertex
+     * @param x3 the x position of the third vertex
+     * @param y3 the y position of the third vertex
+     */
     void triangle(float x1, float y1, float x2, float y2, float x3, float y3)
     {
         // Vertex shader code
@@ -695,30 +846,6 @@ namespace pxl::graphics
 
         // Shader
         pxl::priv::Shader shader(vertexShaderSource, fragmentShaderSource);
-        
-        /*
-        // Vertex shader
-        GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-        glCompileShader(vertexShader);
-        
-        // Fragment shader
-        GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-        glCompileShader(fragmentShader);
-
-        // Shader program
-        GLuint shaderProgram = glCreateProgram();
-
-        // Attach shaders to shader program
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
-        glLinkProgram(shaderProgram);
-
-        // Delete the now useless shaders
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
-        */
 
         // Coordinates of triangle
         GLfloat vertices[9] =
@@ -750,39 +877,6 @@ namespace pxl::graphics
 
         // Draw the triangle
         glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        /*
-        // Create vertex array and vertex buffer objects
-        GLuint VAO, VBO;
-
-        // Generate the VAO and VBO
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-
-        // Make the VAO the current VAO
-        glBindVertexArray(VAO);
-
-        // Bind the VBO
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        // Give vertices to VBO
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-        // Configure so it knows how to read VBO
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        // Use it
-        glEnableVertexAttribArray(0);
-
-        // Prevents accidently modifying them
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-
-        // Tell OpenGL which Shader Program we want to use
-        glUseProgram(shaderProgram);
-        // Bind the VAO so OpenGL knows to use it
-        glBindVertexArray(VAO);
-        // Draw the triangle using the GL_TRIANGLES primitive
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        */
     }
 }
 

@@ -10,17 +10,19 @@
 #include <GLFW/glfw3.h>
 
 // Check if init.h file was included already
-#ifndef PXL_INIT_H_INC_D
-#error Include 'init.h' file before including this file
+#ifndef PXL_INIT_HPP_INC_D_SCF_Y
+#error Include 'init.hpp' file before including this file
 #else
 
 // Successfully included this file
-#define PXL_EVENTS_H_INC_D_SCF
+#define PXL_EVENTS_HPP_INC_D_SCF_Y
 
 // Namespace
 namespace pxl
 {
-    // Function for processing events
+    /**
+     * Function for processing events
+     */
     void pollEvents()
     {
         glfwPollEvents();
