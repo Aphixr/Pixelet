@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Files
+*.sh
+*.dll
+*.lib
+*.a
+*.exe
+*.txt
+
+# Directories
+.vscode/
+include/
+lib/
+src1/
+tests/
+
+# Temporary
+*.glsl
+stb.cpp
+
+
