@@ -5,8 +5,10 @@
 #define PXL
 #define PXL_PIXELET_HPP
 #define PXL_VERSION_MAJOR 0
-#define PXL_VERSION_MINOR 2
+#define PXL_VERSION_MINOR 3
 #define PXL_VERSION_REVISION 0
+
+// Include Pixelet files
 
 // Pixelet namespace
 namespace pxl

@@ -12,11 +12,13 @@
 .vscode/
 include/
 lib/
-src1/
 tests/
+dumpster/
 
 # Temporary
 *.glsl
+*.frag
+*.vert
 stb.cpp
 
 

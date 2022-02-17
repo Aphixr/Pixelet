@@ -85,4 +85,20 @@ bool pxl::Window::whileOpen()
     return !glfwWindowShouldClose(window);
 }
 
+// Array of keys currently being pressed
+static bool keysPressed[346];
+
+// Listen for key press events
+static pxl::keyPressCb callback;
+static void setKey(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    callback(static_cast<pxl::Key>(key));
+}
+
+void pxl::Window::onKeyPress(pxl::keyPressCb callback)
+{
+    ::callback = callback;
+    glfwSetKeyCallback(this->window, setKey);
+}
+
 

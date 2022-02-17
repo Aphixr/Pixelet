@@ -1,3 +1,6 @@
+// Header guard
+#pragma once
+
 // Includes
 #include <iostream>
 #include <string>

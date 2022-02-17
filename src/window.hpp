@@ -16,6 +16,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+// Include init.hpp
+#include "init.hpp"
+
 // Pixelet namespace
 namespace pxl
 {
@@ -23,6 +26,7 @@ namespace pxl
     class Window
     {
         private:
+            // Window
             GLFWwindow* window;
             
         public:
@@ -52,6 +56,9 @@ namespace pxl
 
             // Put this inside main loop
             bool whileOpen();
+
+            // Listen for key press events
+            void onKeyPress(pxl::keyPressCb callback);
     };
 }
 
